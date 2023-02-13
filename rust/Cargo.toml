@@ -6,6 +6,7 @@ edition = "2018"
 
 [dependencies]
 num = "0.4"
+image = {version = "0.24"}
 
 [[bin]]
 name = "mandelbrot" 
