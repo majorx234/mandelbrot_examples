@@ -8,11 +8,11 @@ use std::time::SystemTime;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    /// window size - how many samples to display
+    /// resolution in x
     #[arg(short, long, default_value_t = 1000)]
     pub xres: usize,
 
-    /// how many samples to display in one line (max 1024)
+    /// resolution in y
     #[arg(short, long, default_value_t = 1000)]
     pub yres: usize,
 }
@@ -20,6 +20,7 @@ struct Args {
 fn main() {
     let threads = 8;
     let args = Args::parse();
+    assert_eq!(args.yres % threads, 0);
     let time_before = SystemTime::now();
     let mut my_mandelbrot: Vec<u8> = vec![0; args.xres * args.yres];
     let pixels_per_thread = args.xres * args.yres / threads;

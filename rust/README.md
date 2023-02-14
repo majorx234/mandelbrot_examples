@@ -6,4 +6,5 @@
 - run: `target/release/mandelbrot -x 1000 -y 1000`
 
 # History
+- 20230214 use of threads
 - 20230213 first version to output PNG file
