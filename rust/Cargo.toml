@@ -8,6 +8,7 @@ edition = "2018"
 num = "0.4"
 image = {version = "0.24"}
 clap = { version = "4.1.4", features = ["derive"]}
+crossbeam = { version = "0.8.2" }
 
 [lib]
 name = "mandelbrot_utils"
