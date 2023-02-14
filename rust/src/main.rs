@@ -1,4 +1,4 @@
-use clap::{Arg, Command, Parser};
+use clap::Parser;
 use mandelbrot_utils::calc::calculate_mandelbrot;
 use mandelbrot_utils::image::write_png;
 use std::time::SystemTime;
@@ -32,5 +32,5 @@ fn main() {
     let time_after = SystemTime::now();
     let time_difference = time_after.duration_since(time_before).unwrap().as_millis();
     print!("caclulation take {} ms", time_difference);
-    write_png("test.png", &my_mandelbrot, (args.xres, args.yres));
+    write_png("test.png", &my_mandelbrot, (args.xres, args.yres)).unwrap();
 }

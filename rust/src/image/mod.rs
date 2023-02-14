@@ -3,7 +3,7 @@ use image::ColorType;
 use image::ImageError;
 
 pub fn write_png(filename: &str, pixels: &[u8], bounds: (usize, usize)) -> Result<(), ImageError> {
-    image::save_buffer_with_format(
+    save_buffer_with_format(
         filename,
         pixels,
         bounds.0 as u32,
