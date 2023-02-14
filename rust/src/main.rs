@@ -19,7 +19,16 @@ struct Args {
 fn main() {
     let args = Args::parse();
     let time_before = SystemTime::now();
-    let my_mandelbrot = calculate_mandelbrot(-1.5, 0.5, -1.0, 1.0, args.xres, args.yres);
+    let mut my_mandelbrot: Vec<u8> = vec![0; args.xres * args.yres];
+    calculate_mandelbrot(
+        &mut my_mandelbrot,
+        -1.5,
+        0.5,
+        -1.0,
+        1.0,
+        args.xres,
+        args.yres,
+    );
     let time_after = SystemTime::now();
     let time_difference = time_after.duration_since(time_before).unwrap().as_millis();
     print!("caclulation take {} ms", time_difference);
