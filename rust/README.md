@@ -21,5 +21,6 @@
 ```
 
 # History
+- 20230217 add more parameters
 - 20230214 use of threads
 - 20230213 first version to output PNG file
