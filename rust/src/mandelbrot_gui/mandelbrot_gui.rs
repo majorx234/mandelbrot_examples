@@ -2,6 +2,7 @@ use eframe::egui;
 use eframe::egui::{lerp, Color32, Rgba, TextureHandle};
 use egui::plot::{GridInput, GridMark};
 use egui::*;
+use mandelbrot_utils::mandelbrot_handler::{self, MandelbrotHandler};
 use plot::{
     Arrows, Bar, BarChart, CoordinatesFormatter, Corner, HLine, Legend, Line, LineStyle,
     MarkerShape, Plot, PlotImage, Points, Polygon, Text, VLine,
@@ -22,7 +23,7 @@ impl Default for MandelbrotData {
 }
 
 impl MandelbrotData {
-    fn ui(&mut self, ui: &mut Ui, mandelbrot_data: Vec<Vec<f32>>) {
+    fn ui(&mut self, ui: &mut Ui, mandelbrot_data: Vec<Vec<u8>>) {
         self.set_values(ui.ctx(), mandelbrot_data);
 
         if let Some((size, texture_id)) = self.texture_id {
@@ -33,7 +34,7 @@ impl MandelbrotData {
         // self.bar_plot(ui);
     }
 
-    fn set_values(&mut self, ctx: &egui::Context, specs: Vec<Vec<f32>>) {}
+    fn set_values(&mut self, ctx: &egui::Context, specs: Vec<Vec<u8>>) {}
 }
 
 //#[derive(Default)]
@@ -65,12 +66,14 @@ impl TextureManager {
 }
 
 pub struct MandelbrotGui {
+    mandelbrot_handler: Option<MandelbrotHandler>,
     mandelbrot: MandelbrotData,
 }
 
 impl MandelbrotGui {
     pub fn new() -> Self {
         Self {
+            mandelbrot_handler: None,
             mandelbrot: MandelbrotData::default(),
         }
     }
@@ -78,6 +81,7 @@ impl MandelbrotGui {
 impl Default for MandelbrotGui {
     fn default() -> Self {
         Self {
+            mandelbrot_handler: None,
             mandelbrot: MandelbrotData::default(),
         }
     }
@@ -85,7 +89,12 @@ impl Default for MandelbrotGui {
 impl eframe::App for MandelbrotGui {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            let test_vec = Vec::new();
+            let mut test_vec = Vec::new();
+            if let Some(mandelbrot_handler) = &mut self.mandelbrot_handler {
+                if let Some(new_mandelbrot) = mandelbrot_handler.get_mandelbrot() {
+                    test_vec = new_mandelbrot;
+                }
+            }
             self.mandelbrot.ui(ui, test_vec);
         });
     }
