@@ -47,19 +47,12 @@ impl TextureManager {
         width: usize,
         height: usize,
     ) {
-        let mut new_cols = specs
+        let mut mandelbrot_img = specs
             .into_iter()
             .flatten()
             .map(|x| egui::epaint::Color32::from_gray(x))
             .collect::<Vec<Color32>>();
-        self.0.append(&mut new_cols);
-        let current_length = self.0.len();
-        if current_length > width * height {
-            let drain_count = current_length - width * height;
-            self.0.drain(0..drain_count);
-        }
-        // maybe return an option
-        // or handle if pixels.len() < width*height
+        self.0 = mandelbrot_img;
         let pixels: Vec<egui::epaint::Color32> = self.0.clone();
         self.1 = Some(ctx.load_texture(
             "color_test_gradient",
