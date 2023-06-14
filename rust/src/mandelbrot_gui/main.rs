@@ -1,11 +1,13 @@
 mod mandelbrot_gui;
-use mandelbrot_gui::MandelbrotGui;
-
 use eframe;
+use mandelbrot_gui::MandelbrotGui;
+use mandelbrot_utils::calc::calculate_mandelbrot;
 
 fn main() {
-    let mut mandelbrot_app = MandelbrotGui::new();
-    let mut options = eframe::NativeOptions::default();
+    let mut my_mandelbrot: Vec<u8> = vec![0; 1024 * 1024];
+    calculate_mandelbrot(&mut my_mandelbrot, -1.5, 0.5, -1.0, 1.0, 1024, 1024);
+    let mandelbrot_app = MandelbrotGui::new(my_mandelbrot);
+    let options = eframe::NativeOptions::default();
 
     eframe::run_native(
         "MandelbrotGui",
