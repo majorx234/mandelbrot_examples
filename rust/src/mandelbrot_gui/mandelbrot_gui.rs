@@ -6,6 +6,7 @@ use mandelbrot_utils::mandelbrot_handler::MandelbrotHandler;
 struct MandelbrotWidget {
     pub tex_mngr: TextureManager,
     pub texture_id: Option<(egui::Vec2, egui::TextureId)>,
+    pub texture_response: Option<Response>,
 }
 
 impl MandelbrotWidget {
@@ -17,6 +18,7 @@ impl MandelbrotWidget {
         Self {
             tex_mngr: TextureManager(mandelbrot_data_rgba, None),
             texture_id: None,
+            texture_response: None,
         }
     }
 }
@@ -24,8 +26,9 @@ impl MandelbrotWidget {
 impl Default for MandelbrotWidget {
     fn default() -> Self {
         Self {
-            tex_mngr: TextureManager(vec![Color32::from_rgb(255, 0, 255); 1024 * 1024], None),
+            tex_mngr: TextureManager(vec![Color32::from_rgb(255, 0, 255); 800 * 800], None),
             texture_id: None,
+            texture_response: None,
         }
     }
 }
@@ -35,24 +38,30 @@ impl MandelbrotWidget {
         if let Some(mandelbrot_data) = mandelbrot_data {
             self.set_values(ui.ctx(), mandelbrot_data);
         } else {
-            self.tex_mngr
-                .repaint_mandelbrot_texture(ui.ctx(), 1024, 1024);
+            self.tex_mngr.repaint_mandelbrot_texture(ui.ctx(), 800, 800);
             if let Some(ref texture) = self.tex_mngr.1 {
-                self.texture_id = Some((egui::Vec2::new(1024.0, 1024.0), texture.into()));
+                self.texture_id = Some((egui::Vec2::new(800.0, 800.0), texture.into()));
             }
         }
 
         if let Some((size, texture_id)) = self.texture_id {
-            ui.add(egui::Image::new(texture_id, size));
+            let texture_response =
+                ui.add(egui::Image::new(texture_id, size))
+                    .interact(egui::Sense {
+                        click: true,
+                        drag: true,
+                        focusable: true,
+                    });
+            self.texture_response = Some(texture_response);
             ui.ctx().request_repaint();
         }
     }
 
     fn set_values(&mut self, ctx: &egui::Context, mandelbrot_img_new: Vec<Vec<u8>>) {
         self.tex_mngr
-            .update_mandelbrot_texture(ctx, mandelbrot_img_new, 1024, 1024);
+            .update_mandelbrot_texture(ctx, mandelbrot_img_new, 800, 800);
         if let Some(ref texture) = self.tex_mngr.1 {
-            self.texture_id = Some((egui::Vec2::new(1024.0, 1024.0), texture.into()));
+            self.texture_id = Some((egui::Vec2::new(800.0, 800.0), texture.into()));
         }
         //ToDo: change resolution
     }
@@ -128,5 +137,17 @@ impl eframe::App for MandelbrotGui {
             }
             self.mandelbrot.ui(ui, test_vec);
         });
+        if let Some(ref texture_response) = self.mandelbrot.texture_response {
+            if texture_response.clicked() {
+                if let Some(clicked_pos) = texture_response.interact_pointer_pos() {
+                    println!(
+                        "clicked on mandelbrot x: {} y: {}",
+                        clicked_pos.x, clicked_pos.y
+                    );
+                } else {
+                    println!("clicked on mandelbrot");
+                }
+            }
+        }
     }
 }
